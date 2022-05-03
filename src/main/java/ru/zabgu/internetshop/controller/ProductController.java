@@ -10,8 +10,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("product")
-
-
 public class ProductController {
     private int counter =4;
     private final List<Map<String, String>> products = new ArrayList<>() {{
