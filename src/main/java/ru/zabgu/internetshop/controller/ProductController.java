@@ -14,13 +14,22 @@ import java.util.Map;
 
 public class ProductController {
     private int counter =4;
-    private List<Map<String, String>> products = new ArrayList<Map<String, String>>() {{
-        add(new HashMap<String, String>() {{ put("id", "1"); put("text", "First product"); }});
-        add(new HashMap<String, String>() {{ put("id", "2"); put("text", "Second product"); }});
-        add(new HashMap<String, String>() {{ put("id", "3"); put("text", "Third product"); }});
+    private final List<Map<String, String>> products = new ArrayList<>() {{
+        add(new HashMap<>() {{
+            put("id", "1");
+            put("text", "First product");
+        }});
+        add(new HashMap<>() {{
+            put("id", "2");
+            put("text", "Second product");
+        }});
+        add(new HashMap<>() {{
+            put("id", "3");
+            put("text", "Third product");
+        }});
     }};
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Map<String, String>> list() {
         return products;
     }
@@ -36,7 +45,7 @@ public class ProductController {
                 .orElseThrow(NotFoundException::new);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public Map<String, String> create(@RequestBody Map<String, String>product) {
         product.put("id", String.valueOf(counter++));
 
@@ -45,8 +54,8 @@ public class ProductController {
         return product;
     }
     @PutMapping("{id}")
-    public Map<String, String> update(@RequestBody String id, @RequestBody Map<String, String>product) {
-        Map<String, String> productFromDb = getId(product.get("id"));
+    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String>product) {
+        Map<String, String> productFromDb = getId("id");
 
         productFromDb.putAll(product);
         productFromDb.put("id", id);
