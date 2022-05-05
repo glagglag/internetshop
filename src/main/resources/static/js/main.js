@@ -33,9 +33,16 @@ Vue.component('product-form', {
             var product = { text: this.text };
 
             if (this.id){
-                productApi.update({id: this.id, product: product.text}).then(result =>
+                fetch('http://localhost:8080/product/' + this.id, {
+                    method: 'PUT',
+                    body: JSON.stringify(product),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(result =>
                     result.json().then(data => {
-                        var index = getIndex(this.product, data.id);
+                        var index = getIndex(this.products, data.id);
                         this.products.splice(index, 1, data);
                     })
                 )
@@ -59,11 +66,18 @@ Vue.component('product-row', {
             this.editProduct(this.product);
         },
         del: function (){
-            productApi.remove({}, {id: this.product.id}).then(result =>{
-                if (result.ok){
-                    this.products.splice(this.products.indexOf(this.product), 1)
+            fetch('http://localhost:8080/product/' + this.product.id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 }
-            })
+            }).then(result => {
+                    if (result.ok){
+                        this.products.splice(this.products.indexOf(this.product), 1)
+                    }
+                }
+            )
         }
     }
 });

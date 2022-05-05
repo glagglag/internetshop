@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/product")
+@CrossOrigin("*")
 public class ProductController {
     private int counter =4;
     private final List<Map<String, String>> products = new ArrayList<>() {{
@@ -51,18 +52,17 @@ public class ProductController {
 
         return product;
     }
-    @PutMapping
-    public Map<String, String> update(@RequestParam("id") String id, @RequestParam("productIzm") String product) {
-        Map<String, String> productFromDb = getId("id");
-        products.add(new HashMap<>() {{
-            put("id", id);
-            put("text", product);
-        }});
+    @PutMapping("/{id}")
+    public Map<String, String> update(@PathVariable("id") String id, @RequestBody Map<String, String> product) {
+        Map<String, String> productFromDb = getId(id);
+
+        productFromDb.putAll(product);
+        productFromDb.put("id", id);
 
         return productFromDb;
     }
-    @DeleteMapping
-    public void delete(@RequestParam("id") String id){
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") String id){
         Map<String, String>product=getId(id);
 
         products.remove(product);
