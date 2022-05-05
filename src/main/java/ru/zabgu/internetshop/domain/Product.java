@@ -1,4 +1,4 @@
-package domain;
+package ru.zabgu.internetshop.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

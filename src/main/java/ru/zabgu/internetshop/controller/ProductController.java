@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("product")
+@RequestMapping("/product")
 public class ProductController {
     private int counter =4;
     private final List<Map<String, String>> products = new ArrayList<>() {{
@@ -31,7 +31,7 @@ public class ProductController {
     public List<Map<String, String>> list() {
         return products;
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Map<String, String> getOne(@PathVariable String id){
         return getId(id);
     }
@@ -51,17 +51,18 @@ public class ProductController {
 
         return product;
     }
-    @PutMapping("{id}")
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String>product) {
+    @PutMapping
+    public Map<String, String> update(@RequestParam("id") String id, @RequestParam("productIzm") String product) {
         Map<String, String> productFromDb = getId("id");
-
-        productFromDb.putAll(product);
-        productFromDb.put("id", id);
+        products.add(new HashMap<>() {{
+            put("id", id);
+            put("text", product);
+        }});
 
         return productFromDb;
     }
-    @DeleteMapping("{id}")
-    public void delete(@PathVariable String id){
+    @DeleteMapping
+    public void delete(@RequestParam("id") String id){
         Map<String, String>product=getId(id);
 
         products.remove(product);

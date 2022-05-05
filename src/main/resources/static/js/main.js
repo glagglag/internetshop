@@ -33,7 +33,7 @@ Vue.component('product-form', {
             var product = { text: this.text };
 
             if (this.id){
-                productApi.update({id: this.id}, product).then(result =>
+                productApi.update({id: this.id, product: product.text}).then(result =>
                     result.json().then(data => {
                         var index = getIndex(this.product, data.id);
                         this.products.splice(index, 1, data);
@@ -59,7 +59,7 @@ Vue.component('product-row', {
             this.editProduct(this.product);
         },
         del: function (){
-            productApi.remove({id: this.product.id}).then(result =>{
+            productApi.remove({}, {id: this.product.id}).then(result =>{
                 if (result.ok){
                     this.products.splice(this.products.indexOf(this.product), 1)
                 }
