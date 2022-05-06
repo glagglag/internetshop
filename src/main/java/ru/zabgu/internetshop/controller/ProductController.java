@@ -1,11 +1,14 @@
 package ru.zabgu.internetshop.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.zabgu.internetshop.domain.Product;
+import ru.zabgu.internetshop.domain.Views;
 import ru.zabgu.internetshop.repo.ProductRepo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,10 +24,12 @@ public class ProductController {
     }
 
     @GetMapping
+    @JsonView(Views.IdName.class)
     public List<Product> list() {
         return productRepo.findAll();
     }
     @GetMapping("/{id}")
+    @JsonView(Views.FullProduct.class)
     public Product getOne(@PathVariable("id") Product product){
         return product;
     }
@@ -32,6 +37,7 @@ public class ProductController {
 
     @PostMapping
     public Product create(@RequestBody Product product) {
+        product.setCreationDate(LocalDateTime.now());
         return productRepo.save(product);
     }
     @PutMapping("/{id}")
@@ -39,7 +45,7 @@ public class ProductController {
                           @RequestBody Product product) {
         BeanUtils.copyProperties(product, productFromDb, "id");
 
-        return productRepo.save(product);
+        return productRepo.save(productFromDb);
     }
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Product product){
