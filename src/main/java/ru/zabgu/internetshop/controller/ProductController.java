@@ -1,71 +1,49 @@
 package ru.zabgu.internetshop.controller;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.zabgu.internetshop.controller.exceptions.NotFoundException;
+import ru.zabgu.internetshop.domain.Product;
+import ru.zabgu.internetshop.repo.ProductRepo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/product")
 @CrossOrigin("*")
 public class ProductController {
-    private int counter =4;
-    private final List<Map<String, String>> products = new ArrayList<>() {{
-        add(new HashMap<>() {{
-            put("id", "1");
-            put("text", "First product");
-        }});
-        add(new HashMap<>() {{
-            put("id", "2");
-            put("text", "Second product");
-        }});
-        add(new HashMap<>() {{
-            put("id", "3");
-            put("text", "Third product");
-        }});
-    }};
+    private final ProductRepo productRepo;
+
+    @Autowired
+
+    public ProductController(ProductRepo productRepo) {
+        this.productRepo = productRepo;
+    }
 
     @GetMapping
-    public List<Map<String, String>> list() {
-        return products;
+    public List<Product> list() {
+        return productRepo.findAll();
     }
     @GetMapping("/{id}")
-    public Map<String, String> getOne(@PathVariable String id){
-        return getId(id);
-    }
-
-    private Map<String, String> getId(String id) {
-        return products.stream()
-                .filter(product -> product.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
-    }
-
-    @PostMapping
-    public Map<String, String> create(@RequestBody Map<String, String>product) {
-        product.put("id", String.valueOf(counter++));
-
-        products.add(product);
-
+    public Product getOne(@PathVariable("id") Product product){
         return product;
     }
+
+
+    @PostMapping
+    public Product create(@RequestBody Product product) {
+        return productRepo.save(product);
+    }
     @PutMapping("/{id}")
-    public Map<String, String> update(@PathVariable("id") String id, @RequestBody Map<String, String> product) {
-        Map<String, String> productFromDb = getId(id);
+    public Product update(@PathVariable("id") Product productFromDb,
+                          @RequestBody Product product) {
+        BeanUtils.copyProperties(product, productFromDb, "id");
 
-        productFromDb.putAll(product);
-        productFromDb.put("id", id);
-
-        return productFromDb;
+        return productRepo.save(product);
     }
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") String id){
-        Map<String, String>product=getId(id);
-
-        products.remove(product);
+    public void delete(@PathVariable("id") Product product){
+        productRepo.delete(product);
     }
 }
 
